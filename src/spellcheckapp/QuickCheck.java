@@ -39,34 +39,45 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class QuickCheck {
+    /** Window width, in pixels*/
     private static final int WINDOW_WIDTH = 480;
+    
+    /** Window height, in pixels*/
     private static final int WINDOW_HEIGHT = 540;
+    
+    /** Left panel background color*/
     private static final Color LEFT_COLOR = Color.WHITE;
+    
+    /** Right panel background color*/
     private static final Color RIGHT_COLOR = new Color(126, 205, 205);
+   
+    /** Top panel (quickCheck title bar) background color*/
     private static final Color TOP_COLOR = new Color(80, 166, 166);
     
+    /** Initialization for main input textarea*/
     private static final JTextArea text = new JTextArea();
-    private static final JTextArea errorText = new JTextArea(10,20);
 
-    
+    /** Title bar label initialization*/
     private static JLabel upperLabel = new JLabel("quickCheck Your Writing");
 
+    /** Dictionary filename */
     private static final String DICTIONARY_FILE_NAME = "words.txt";
 
+    /** Initialization of font used in titles */
     private static Font titleFont = null;
 
+    /** Main window initialization */
     private static JFrame frame;
     
-    private static JList errorsList;
-    private static DefaultListModel errListModel = new DefaultListModel();
+    /** Wrong words list initialization*/
+    private static JList<String> errorsList;
+    private static DefaultListModel<String> errListModel = new DefaultListModel<String>();
     
-
-    private static JList correctionsList;
-    private static DefaultListModel correctionsListModel = new DefaultListModel();
+    /** Correction suggestions list initialization*/
+    private static JList<String> correctionsList;
+    private static DefaultListModel<String> correctionsListModel = new DefaultListModel<String>();
     
-    
-    String initString;
-    
+    /** Converts dictionary file to HashSet for faster access time */   
     private static final Set<String> VALUES = 
             new HashSet<String>(Arrays.asList(initString().split("\n")));
 
@@ -153,7 +164,6 @@ public class QuickCheck {
         JPanel rightNestedLower = new JPanel();
         rightNestedLower.setLayout(new FlowLayout(FlowLayout.CENTER,20,20));
         rightNestedLower.setBackground(RIGHT_COLOR);
-        
         
         BorderLayout rightLayout = new BorderLayout();
         lowerPanel.getRight().setLayout(rightLayout);
