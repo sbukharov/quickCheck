@@ -145,13 +145,13 @@ public class QuickCheck {
         JScrollPane textScrollHolder = new JScrollPane(text);
         textScrollHolder.setBorder(BorderFactory.createEmptyBorder());
 
-        //Creates the text field on the left side  
+        //Creates the text field on the left side
         text.setCaretPosition(0);
         lowerPanel.getLeft().add(textScrollHolder);
         text.setLineWrap(true);
         text.setWrapStyleWord(true);
 
-        //Adds text field errorsListener 
+        //Adds text field errorsListener
         QuickCheck.TypeListener lstn = thisProgram.new TypeListener();
         text.getDocument().addDocumentListener(lstn);
 
@@ -201,7 +201,7 @@ public class QuickCheck {
         /*Error Word List Setup*/
         
         //Error words List creation
-        errorsList = new JList(errListModel);
+        errorsList = new JList<String>(errListModel);
         errorsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         errorsList.setLayoutOrientation(JList.VERTICAL);
         errorsList.setVisibleRowCount(10);
@@ -241,7 +241,7 @@ public class QuickCheck {
         /*Correction Word List Setup*/
         
         //Correction words List creation
-        correctionsList = new JList(correctionsListModel);
+        correctionsList = new JList<String>(correctionsListModel);
         correctionsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         correctionsList.setLayoutOrientation(JList.VERTICAL);
         correctionsList.setVisibleRowCount(10);
@@ -262,13 +262,7 @@ public class QuickCheck {
 
         //Adding both the List and the Scroll bar to the right inner panel
         rightNestedLower.add(correctionsWrapper);
-
-        //!!Test for matches
-        String[] printArr = closeMatches("jasdasks");
-        for (int i = 0; i < printArr.length; i++) {
-            System.out.println(printArr[i]);
-        }
-        
+       
         
         //Sets colors for panels
         rightNestedInner.setBackground(RIGHT_COLOR);
@@ -284,15 +278,10 @@ public class QuickCheck {
         lowerPanel.getLeft().setMaximumSize(new Dimension(WINDOW_WIDTH,WINDOW_HEIGHT));
         
    
-        //errorsList lsiteners and setup
+        //errorsList listeners and setup
         errorsList.addListSelectionListener(selectClickListener);
         errorsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        
-        //ignore-correct-auto correct all?
-        //ignore all?
-        //add scroll area with possible corrections for each word
-        //find close matches function
         
         frame.pack();
         frame.setVisible(true);
@@ -304,7 +293,7 @@ public class QuickCheck {
      * of the GUI. Composed of two side by side panels that can be accessed by their related
      * getters and setters.
      * 
-     * @author Lorgus
+     * @author sbukharov
      * @version 1.0.1
      *
      */
@@ -380,7 +369,7 @@ public class QuickCheck {
     
     /**
      * Custom DocumentListener that calls the spellCheck function.
-     * @author Lorgus
+     * @author sbukharov
      * @version 1.0.1
      */
     class TypeListener implements DocumentListener {

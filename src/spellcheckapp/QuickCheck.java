@@ -13,17 +13,21 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -39,47 +43,54 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class QuickCheck {
-    /** Window width, in pixels*/
+    /** Window width, in pixels.*/
     private static final int WINDOW_WIDTH = 480;
     
-    /** Window height, in pixels*/
+    /** Window height, in pixels.*/
     private static final int WINDOW_HEIGHT = 540;
     
-    /** Left panel background color*/
+    /** Left panel background color.*/
     private static final Color LEFT_COLOR = Color.WHITE;
     
-    /** Right panel background color*/
+    /** Right panel background color.*/
     private static final Color RIGHT_COLOR = new Color(126, 205, 205);
    
-    /** Top panel (quickCheck title bar) background color*/
+    /** Top panel (quickCheck title bar) background color.*/
     private static final Color TOP_COLOR = new Color(80, 166, 166);
     
-    /** Initialization for main input textarea*/
+    /** Initialization for main input textarea.*/
     private static final JTextArea text = new JTextArea();
 
-    /** Title bar label initialization*/
+    /** Title bar label initialization.*/
     private static JLabel upperLabel = new JLabel("quickCheck Your Writing");
 
-    /** Dictionary filename */
+    /** Dictionary filename. */
     private static final String DICTIONARY_FILE_NAME = "words.txt";
 
-    /** Initialization of font used in titles */
+    /** Initialization of font used in titles. */
     private static Font titleFont = null;
 
-    /** Main window initialization */
+    /** Main window initialization. */
     private static JFrame frame;
     
-    /** Wrong words list initialization*/
+    /** Wrong words list initialization.*/
     private static JList<String> errorsList;
     private static DefaultListModel<String> errListModel = new DefaultListModel<String>();
     
-    /** Correction suggestions list initialization*/
+    /** Correction suggestions list initialization.*/
     private static JList<String> correctionsList;
     private static DefaultListModel<String> correctionsListModel = new DefaultListModel<String>();
     
-    /** Converts dictionary file to HashSet for faster access time */   
+    /** Converts dictionary file to HashSet for faster access time. */   
     private static final Set<String> VALUES = 
             new HashSet<String>(Arrays.asList(initString().split("\n")));
+    
+    private static JButton b1;
+    private static JButton b2;
+    private static JButton b3;
+    
+    private static String[] wrongWords = null;
+
 
     /**
      * Method converting the dictionary text file to a String, then returning it.
@@ -119,10 +130,12 @@ public class QuickCheck {
         }
         titleFont = titleFont.deriveFont(Font.BOLD,28f);
 
-        //Creates main window
+        //Creates main window and icon
         frame = new JFrame("quickCheck");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
+        ImageIcon frameIcon = new ImageIcon(QuickCheck.class.getResource("/logo.png"));
+        frame.setIconImage(frameIcon.getImage());
         
         /*Required to instantiate an inner class*/
         QuickCheck thisProgram = new QuickCheck();
@@ -201,7 +214,7 @@ public class QuickCheck {
         /*Error Word List Setup*/
         
         //Error words List creation
-        errorsList = new JList(errListModel);
+        errorsList = new JList<String>(errListModel);
         errorsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         errorsList.setLayoutOrientation(JList.VERTICAL);
         errorsList.setVisibleRowCount(10);
@@ -259,6 +272,29 @@ public class QuickCheck {
         correctionsWrapper.setLayout(correctionsWrapperLayout);
         correctionsWrapper.add(correctionLabelPanel);
         correctionsWrapper.add(correctionsListScroller);
+        
+        
+        JPanel buttonHolder = new JPanel();
+        BoxLayout buttonHolderLayout = new BoxLayout(buttonHolder, BoxLayout.Y_AXIS);
+        buttonHolder.setLayout(buttonHolderLayout);
+        correctionsWrapper.add(buttonHolder);
+        
+        //Creates wrapper to center JLabel
+        JPanel btnHold1 = new JPanel();
+        btnHold1.setBackground(RIGHT_COLOR);
+        JPanel btnHold2 = new JPanel();
+        btnHold2.setBackground(RIGHT_COLOR);
+        JPanel btnHold3 = new JPanel();
+        btnHold3.setBackground(RIGHT_COLOR);
+        Box box3 = new Box(BoxLayout.Y_AXIS);
+        box3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        box3.add(btnHold1);
+        box3.add(Box.createVerticalGlue());
+        box3.add(btnHold2);
+        box3.add(Box.createVerticalGlue());
+        box3.add(btnHold3);
+        box3.add(Box.createVerticalGlue());
+
 
         //Adding both the List and the Scroll bar to the right inner panel
         rightNestedLower.add(correctionsWrapper);
@@ -282,6 +318,45 @@ public class QuickCheck {
         errorsList.addListSelectionListener(selectClickListener);
         errorsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        ImageIcon corBtnIcon =  new ImageIcon(QuickCheck.class.getResource("/bt1def.png"));
+        ImageIcon corAllBtnIcon =  new ImageIcon(QuickCheck.class.getResource("/bt2def.png"));
+        ImageIcon ignoreBtnIcon =  new ImageIcon(QuickCheck.class.getResource("/bt3def.png"));
+
+        b1 = new JButton("",corBtnIcon);
+        b2 = new JButton("",corAllBtnIcon);
+        b3 = new JButton("",ignoreBtnIcon);
+        b1.setActionCommand("disable");
+        b1.setBorderPainted(false);
+        b1.setFocusPainted(false);
+        b1.setContentAreaFilled(false);
+        b2.setActionCommand("disable");
+        b2.setBorderPainted(false);
+        b2.setFocusPainted(false);
+        b2.setContentAreaFilled(false);
+        b3.setActionCommand("disable");
+        b3.setBorderPainted(false);
+        b3.setFocusPainted(false);
+        b3.setContentAreaFilled(false);
+        
+        //QuickCheck.btnListener listen = thisProgram.new btnListener(b1);
+        //b1.addActionListener(listen);
+        //b1.setPreferredSize(new Dimension(100,50));
+        //b2.setPreferredSize(new Dimension(100,50));
+        //b3.setPreferredSize(new Dimension(100,50));
+
+        buttonHolder.add(box3);
+        btnHold1.add(b1);
+        btnHold2.add(b2);
+        btnHold3.add(b3);
+        
+        CorrBtnListener mouseListen = thisProgram.new CorrBtnListener();
+        b1.addMouseListener(mouseListen);
+
+        CorrAllBtnListener corAllListen = thisProgram.new CorrAllBtnListener();
+        b2.addMouseListener(corAllListen);
+
+        IgnoreBtnListener ignoreListen = thisProgram.new IgnoreBtnListener();
+        b3.addMouseListener(ignoreListen);
         
         frame.pack();
         frame.setVisible(true);
@@ -297,7 +372,7 @@ public class QuickCheck {
      * @version 1.0.1
      *
      */
-    public class ContentFrame extends JPanel{
+    public class ContentFrame extends JPanel {
         private static final long serialVersionUID = 1L;
         private JPanel leftSide;
         private JPanel rightSide;
@@ -376,8 +451,8 @@ public class QuickCheck {
         TypeListener() {
             super();
         }
+        
         /**No implementation.*/
-        @Override
         public void changedUpdate(DocumentEvent arg0) {}
         
         /**Function that is called when a character 
@@ -386,9 +461,9 @@ public class QuickCheck {
         public void insertUpdate(DocumentEvent arg0) {
             spellCheck();
         }
+        
         /**Function that is called when a character is 
          * removed from the left JTextArea.*/
-        @Override
         public void removeUpdate(DocumentEvent arg0) {
             spellCheck();
         }
@@ -406,7 +481,6 @@ public class QuickCheck {
         errListModel.clear();
                 
         //Create and fill an array with all incorrect words
-        String[] wrongWords = null;
         wrongWords = wordsInError(text.getText());            
         
         //Display that errorsList on the right side of the document
@@ -462,7 +536,7 @@ public class QuickCheck {
         public void valueChanged(ListSelectionEvent selectEvent) {
             correctionsListModel.clear();
                 if (!errorsList.getValueIsAdjusting() && !errorsList.isSelectionEmpty()) {
-                    List selectionValues = errorsList.getSelectedValuesList();
+                    List<String> selectionValues = errorsList.getSelectedValuesList();
                     String selection = (String) selectionValues.get(0);
                     String[] nearWords = closeMatches(selection);
                     if (!arrayIsEmpty(nearWords)) {
@@ -562,6 +636,242 @@ public class QuickCheck {
             }
         }
         return true;
+    }
+    
+
+    public class CorrBtnListener implements MouseListener {
+
+        /**
+         * Main method that responds to mouseClick events.
+         */
+        public void mouseClicked(MouseEvent arg0) {
+            if (errListModel.getSize() > 0 && !errorsList.isSelectionEmpty() 
+                    && !correctionsList.isSelectionEmpty()) {
+                
+                String correction = correctionsList.getSelectedValue();
+                String error = errorsList.getSelectedValue();
+    
+                char[] inputAsChars = text.getText().toCharArray();
+                int errIndex = getErrorIndex(error,inputAsChars);
+                
+                for (int i = 0; i < error.length(); i++) {
+                    inputAsChars = ArrayUtils.remove(inputAsChars, errIndex);
+                }
+                
+                for (int i = 0; i < correction.length();i++) {
+                    inputAsChars = ArrayUtils.add(inputAsChars, errIndex, 
+                            correction.charAt(correction.length() - i - 1));
+                }
+                
+                correctionsListModel.clear();
+                errListModel.clear();
+                
+                text.setText(new String(inputAsChars));
+            }
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent arg0) {
+            if (arg0.getSource().equals(b1)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt1hvr.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b1.setIcon(leftButtonIcon);
+            }            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent arg0) {
+            if (arg0.getSource().equals(b1)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt1def.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b1.setIcon(leftButtonIcon);
+            }            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent arg0) {   
+            if (arg0.getSource().equals(b1)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt1clk.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b1.setIcon(leftButtonIcon);
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent arg0) {
+            if (arg0.getSource().equals(b1)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt1def.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b1.setIcon(leftButtonIcon);
+            }
+        }
+
+        
+    }
+    
+    /**
+     * A helper method that takes as input an array of characters, and an error String
+     * and returns the index at which the first erroneous word in it is located.
+     * @param error The error for which to search the char array
+     * @param text The array of chars to search for the error
+     * @return returns the index at which the wrong word begins
+     */
+    private static int getErrorIndex(String error, char[] text) {
+        int neededMatches = error.length();
+        int currMatches = 0;
+        
+        for (int i = 0; i < text.length; i++) {
+            for (int j = 0; j < error.length(); j++) {
+                   
+                if (text[i + j] == error.charAt(j)) {
+                    currMatches++;
+                } else {
+                    break;
+                }
+                
+                if (currMatches == neededMatches) {
+                    return i;
+                } 
+            }
+            currMatches = 0;
+        }
+        return -1;
+    }
+    
+    public class CorrAllBtnListener implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent arg0) {
+            int loops = errListModel.getSize();
+            int skipped = 0;
+            for (int j = 0; j <= loops; j++) {
+                errorsList.setSelectedIndex(0 + skipped);
+                if (correctionsListModel.getSize() > 0) {
+                    correctionsList.setSelectedIndex(0);
+        
+                    //String correction = correctionsList.getSelectedValue();
+                    String correction = correctionsListModel.getElementAt(0);
+                    //String error = errorsList.getSelectedValue();
+                    String error = errListModel.getElementAt(0);
+                    
+                    char[] inputAsChars = text.getText().toCharArray();
+                    int errIndex = getErrorIndex(error,inputAsChars);
+                    
+                    for (int i = 0; i < error.length(); i++) {
+                        inputAsChars = ArrayUtils.remove(inputAsChars, errIndex);
+                    }
+                    
+                    for (int i = 0; i < correction.length(); i++) {
+                        inputAsChars = ArrayUtils.add(inputAsChars,
+                                errIndex,correction.charAt(correction.length() - i - 1));
+                    }
+                    
+                    //correctionsListModel.clear();
+                    errListModel.clear();
+                    correctionsListModel.clear();
+        
+                    
+                    text.setText(new String(inputAsChars));
+                    correctionsList.setSelectedIndex(0);
+                } else {
+                    skipped++;
+                }
+                errorsList.setSelectedIndex(0);
+            }
+
+        }
+
+
+        @Override
+        public void mouseEntered(MouseEvent arg0) {
+            if (arg0.getSource().equals(b2)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt2hvr.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b2.setIcon(leftButtonIcon);
+            }            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent arg0) {
+            if (arg0.getSource().equals(b2)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt2def.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b2.setIcon(leftButtonIcon);
+            }            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent arg0) {   
+            if (arg0.getSource().equals(b2)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt2clk.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b2.setIcon(leftButtonIcon);
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent arg0) {
+            if (arg0.getSource().equals(b2)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt2def.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b2.setIcon(leftButtonIcon);
+            }
+        }
+    }
+    
+    public class IgnoreBtnListener implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent arg0) {
+            if (errListModel.getSize() > 0 && !errorsList.isSelectionEmpty()) {
+                String ignoreString = errorsList.getSelectedValue();
+                VALUES.add(ignoreString);
+
+                for (int i = 0; i < errListModel.size(); i++) {
+                    if ( errListModel.getElementAt(i) == ignoreString) {
+                        errListModel.removeElementAt(i);
+                    }
+                }
+                correctionsListModel.clear();
+    
+            }
+        }
+
+
+        @Override
+        public void mouseEntered(MouseEvent arg0) {
+            if (arg0.getSource().equals(b3)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt3hvr.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b3.setIcon(leftButtonIcon);
+            }            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent arg0) {
+            if (arg0.getSource().equals(b3)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt3def.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b3.setIcon(leftButtonIcon);
+            }            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent arg0) {   
+            if (arg0.getSource().equals(b3)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt3clk.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b3.setIcon(leftButtonIcon);
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent arg0) {
+            if (arg0.getSource().equals(b3)) {
+                java.net.URL imgUrl = QuickCheck.class.getResource("/bt3def.png");
+                ImageIcon leftButtonIcon =  new ImageIcon(imgUrl);
+                b3.setIcon(leftButtonIcon);
+            }
+        }
     }
 
 }
